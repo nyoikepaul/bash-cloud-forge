@@ -17,7 +17,7 @@ source "$REPO_ROOT/lib/security.sh"
 
 # Load environment variables
 if [ -f "$REPO_ROOT/.env" ]; then
-  export $(grep -v '^#' "$REPO_ROOT/.env" | xargs)
+  export "$(grep -v '^#' "$REPO_ROOT/.env" | xargs)"
 else
   # We don't exit here so the user can still see the help menu
   log_warn ".env file not found. API commands may fail."

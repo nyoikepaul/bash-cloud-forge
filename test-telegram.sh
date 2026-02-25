@@ -9,7 +9,7 @@ log_info "Initiating Telegram Watchdog Connectivity Test..."
 
 # Check if .env exists and load it
 if [[ -f .env ]]; then
-  export $(grep -v '^#' .env | xargs)
+  export "$(grep -v '^#' .env | xargs)"
 else
   fatal ".env file not found. Please create one with TELEGRAM_TOKEN and TELEGRAM_CHAT_ID."
 fi

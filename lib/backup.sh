@@ -5,7 +5,8 @@ set -euo pipefail
 perform_backup() {
   local source_path="${1:-/var/www/flask-api}"
   local backup_dir="/var/backups/forge"
-  local timestamp=$(date +%Y%m%d_%H%M%S)
+  local timestamp
+  timestamp=$(date +%Y%m%d_%H%M%S)
   local archive_name="backup_${timestamp}.tar.gz"
   local retention_days=7
 

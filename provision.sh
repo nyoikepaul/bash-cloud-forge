@@ -6,7 +6,7 @@ source lib/security.sh
 source lib/monitor.sh
 
 # Load env
-export $(grep -v '^#' .env | xargs)
+export "$(grep -v '^#' .env | xargs)"
 
 SERVER_NAME=${1:-"forge-node"}
 
