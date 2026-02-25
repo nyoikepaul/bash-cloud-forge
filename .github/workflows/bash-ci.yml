@@ -1,0 +1,27 @@
+name: Bash Expert CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Run ShellCheck
+        uses: ludeeus/action-shellcheck@master
+        with:
+          scandir: '.'
+          
+      - name: Check Bash Formatting (shfmt)
+        run: |
+          sudo apt-get update && sudo apt-get install -y shfmt
+          shfmt -d -i 2 -ci .
+          
+      - name: Verify Executable Permissions
+        run: |
+          find . -type f -name "*.sh" ! -executable -exec echo "Missing +x on {}" \; -exec exit 1 \;

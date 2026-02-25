@@ -1,15 +1,16 @@
 #!/bin/bash
 set -euo pipefail
+source "$(dirname "$0")/lib/logger.sh"
 
 if [ -z "${1:-}" ]; then
-  echo "Usage: ./deploy.sh <droplet-name>"
+  log_info "Usage: ./deploy.sh <droplet-name>"
   exit 1
 fi
 
 DROPLET=$1
-IP=$(doctl compute droplet get "$DROPLET" -o json | jq -r '.[0].networks.v4[0].ip_address' 2>/dev/null || echo "IP not found")
+IP=$(doctl compute droplet get "$DROPLET" -o json | jq -r '.[0].networks.v4[0].ip_address' 2>/dev/null || log_info "IP not found")
 
-echo "🚀 Deploying to $DROPLET ($IP)..."
+log_info "🚀 Deploying to $DROPLET ($IP)..."
 
 # Create app directory on server if missing
 ssh -o StrictHostKeyChecking=no deploy@"$IP" '
@@ -72,5 +73,5 @@ EON
   sudo nginx -t && sudo systemctl restart nginx
 '
 
-echo "✅ Deployment complete!"
-echo "🌐 Your app is live at http://$IP"
+log_info "✅ Deployment complete!"
+log_info "🌐 Your app is live at http://$IP"

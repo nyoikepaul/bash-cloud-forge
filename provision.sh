@@ -1,5 +1,6 @@
 #!/bin/bash
 set -euo pipefail
+source "$(dirname "$0")/lib/logger.sh"
 source scripts/utils/common.sh
 source lib/security.sh
 source lib/monitor.sh

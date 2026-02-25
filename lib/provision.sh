@@ -1,4 +1,11 @@
 #!/bin/bash
+# --- Expert Mode: Strict Execution & Error Trapping ---
+set -euo pipefail
+IFS=$'
+	'
+
+trap 'echo "[❌ ERROR] Command failed at line $LINENO" >&2' ERR
+
 
 provision_droplet() {
     local NAME=$1
