@@ -24,6 +24,7 @@ COMMAND=$1
 shift
 
 case "$COMMAND" in
+    -h|--help) usage ;;
     provision)
         log_info "Starting provisioning phase..."
         bash ./provision.sh "$@"

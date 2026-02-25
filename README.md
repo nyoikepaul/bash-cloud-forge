@@ -43,7 +43,11 @@ Ensure your `.env` file is configured based on `.env.example`.
 ./forge.sh deploy production
 
 # Run the Telegram Watchdog test
+# Backup application data
+./forge.sh backup /var/www/flask-api
+* **Automated Backups:** Timestamped archives with configurable retention.
 ./forge.sh test
+* **Automated Backups:** Timestamped archives with configurable retention.
 \```
 
 ---

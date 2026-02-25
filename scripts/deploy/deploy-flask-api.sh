@@ -14,8 +14,8 @@ setup_app_dir "${DEPLOY_PATH}"
 
 # 2. Setup Virtual Environment (Expert move: Isolated dependencies)
 if [[ ! -d "${DEPLOY_PATH}/venv" ]]; then
-    log_info "Creating Python Virtual Environment..."
-    python3 -m venv "${DEPLOY_PATH}/venv"
+  log_info "Creating Python Virtual Environment..."
+  python3 -m venv "${DEPLOY_PATH}/venv"
 fi
 
 # 3. Install/Update Dependencies
