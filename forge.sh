@@ -32,6 +32,14 @@ case "$COMMAND" in
         log_info "Starting deployment phase..."
         bash ./deploy.sh "$@"
         ;;
+    harden)
+        source "$(dirname "$0")/lib/security.sh"
+        apply_hardening
+        ;;
+    harden)
+        source "$(dirname "$0")/lib/security.sh"
+        apply_hardening
+        ;;
     test)
         log_info "Running system checks..."
         bash ./test-telegram.sh "$@"

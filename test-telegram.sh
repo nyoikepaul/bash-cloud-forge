@@ -1,20 +1,19 @@
-#!/bin/bash
-# --- Expert Mode: Strict Execution & Error Trapping ---
+#!/usr/bin/env bash
 set -euo pipefail
-IFS=$'
-	'
 
-trap 'echo "[❌ ERROR] Command failed at line $LINENO" >&2' ERR
+# Load core libraries
+source "$(dirname "$0")/lib/logger.sh"
+source "$(dirname "$0")/lib/telegram.sh"
 
-source .env
-source lib/monitor.sh
-source scripts/utils/common.sh
+log_info "Initiating Telegram Watchdog Connectivity Test..."
 
-log_info "🧪 Testing Telegram Notification..."
-send_tg_msg "✅ Forge Watchdog is active! Test alert from $HOSTNAME."
-
-if [ $? -eq 0 ]; then
-    log_info "Message sent! Check your Telegram phone app."
+# Check if .env exists and load it
+if [[ -f .env ]]; then
+    export $(grep -v '^#' .env | xargs)
 else
-    log_error "Failed to send. Check your TOKEN and CHAT_ID in .env"
+    fatal ".env file not found. Please create one with TELEGRAM_TOKEN and TELEGRAM_CHAT_ID."
 fi
+
+MESSAGE="🚀 <b>Bash-Cloud-Forge Alert</b>%0AStatus: <code>Online</code>%0AHost: <code>$(hostname)</code>%0AMessage: Connectivity test successful."
+
+send_telegram_msg "$MESSAGE"
