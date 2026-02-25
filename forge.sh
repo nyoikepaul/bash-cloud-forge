@@ -48,7 +48,8 @@ case "$COMMAND" in
   monitor)
     source "$(dirname "$0")/lib/monitor.sh"
     source "$(dirname "$0")/lib/telegram.sh"
-    check_resources
+        check_resources
+        check_uptime "$@"
     ;;
 
   backup)
@@ -59,6 +60,10 @@ case "$COMMAND" in
   update)
     source "$(dirname "$0")/lib/update.sh"
     update_toolkit
+    ;;
+  status)
+    source "$(dirname "$0")/lib/dashboard.sh"
+    show_dashboard
     ;;
   test)
     log_info "Running system checks..."
