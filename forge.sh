@@ -40,6 +40,11 @@ case "$COMMAND" in
         source "$(dirname "$0")/lib/security.sh"
         apply_hardening
         ;;
+    monitor)
+        source "$(dirname "$0")/lib/monitor.sh"
+        source "$(dirname "$0")/lib/telegram.sh"
+        check_resources
+        ;;
     test)
         log_info "Running system checks..."
         bash ./test-telegram.sh "$@"
