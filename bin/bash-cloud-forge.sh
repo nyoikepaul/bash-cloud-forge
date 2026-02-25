@@ -1,46 +1,44 @@
-#!/usr/bin/env bash
-# ===============================================
-# bash-cloud-forge — Main CLI (bulletproof version)
-# ===============================================
+#!/bin/bash
+# Main Entry Point for bash-cloud-forge
 
-VERSION="0.1.0"
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
-# Colors
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-CYAN='\033[0;36m'
-NC='\033[0m'
+# Source the utilities and modules
+source "$REPO_ROOT/scripts/utils/common.sh"
+source "$REPO_ROOT/lib/monitor.sh"
+source "$REPO_ROOT/lib/security.sh"
 
-print_usage() {
-    echo -e "${CYAN}🛠️  bash-cloud-forge v${VERSION}${NC}"
-    echo -e "Lightning-fast Bash toolkit for cloud provisioning & deployments\n"
-    echo -e "${BLUE}USAGE:${NC}"
-    echo -e "    ./bin/bash-cloud-forge.sh <command> [options]\n"
-    echo -e "${BLUE}COMMANDS:${NC}"
-    echo -e "    provision-do     Create DigitalOcean droplet + full setup"
-    echo -e "    deploy-flask     One-command Flask/FastAPI deployment"
-    echo -e "    monitor          Health checks + Telegram alerts"
-    echo -e "    help             Show this help\n"
-    echo -e "${BLUE}EXAMPLES:${NC}"
-    echo -e "    ./bin/bash-cloud-forge.sh provision-do --name myapi"
-    echo -e "    ./bin/bash-cloud-forge.sh --help\n"
-    echo -e "${GREEN}Made with ❤️ in Kenya 🇰🇪   @nyoikepaul${NC}"
+# Load environment variables
+if [ -f "$REPO_ROOT/.env" ]; then
+    export $(grep -v '^#' "$REPO_ROOT/.env" | xargs)
+else
+    # We don't exit here so the user can still see the help menu
+    log_warn ".env file not found. API commands may fail."
+fi
+
+print_banner
+check_dependencies
+
+usage() {
+    echo "Usage: forge <command> [arguments]"
+    echo ""
+    echo "Commands:"
+    echo "  harden <ip>    Secure a remote server (SSH, UFW, Fail2Ban)"
+    echo "  monitor <ip>   Install the Telegram monitoring watchdog"
+    echo "  help           Show this message"
+    echo ""
 }
 
-COMMAND="${1:-help}"
-
-case "$COMMAND" in
-    help|--help|-h)
-        print_usage
+case "${1:-}" in
+    harden)
+        if [ -z "${2:-}" ]; then log_error "Missing IP. Usage: forge harden <ip>"; exit 1; fi
+        harden_server "$2"
         ;;
-    provision-do|deploy-flask|monitor)
-        echo -e "${BLUE}[INFO]${NC} $COMMAND module ready — we'll build it next!"
+    monitor)
+        if [ -z "${2:-}" ]; then log_error "Missing IP. Usage: forge monitor <ip>"; exit 1; fi
+        install_monitor "$2"
         ;;
-    *)
-        echo -e "${RED}[ERROR]${NC} Unknown command: $COMMAND"
-        print_usage
-        exit 1
+    help|*)
+        usage
         ;;
 esac
