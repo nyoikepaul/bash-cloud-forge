@@ -1,15 +1,61 @@
-# 🛠️ Bash-Cloud-Forge
-**Pure Bash. Zero Dependencies. Enterprise Hardening.**
+# 🛠️ Bash-Cloud-Forge 2.0
+**Enterprise-Grade Cloud Provisioning & Monitoring Framework**
 
-A high-performance toolkit for DevOps engineers to provision, secure, and monitor cloud infrastructure in seconds.
+[![Bash Expert CI](https://github.com/nyoikepaul/bash-cloud-forge/actions/workflows/bash-ci.yml/badge.svg)](https://github.com/nyoikepaul/bash-cloud-forge/actions)
+![License](https://img.shields.io/github/license/nyoikepaul/bash-cloud-forge)
+![Bash Version](https://img.shields.io/badge/bash-4.4+-blue.svg)
 
-## ✨ Key Features
-* **Lightning Provisioning:** Integrated with DigitalOcean.
-* **Security Hardening:** Automatic SSH lockdown, UFW firewall, and Fail2Ban.
-* **Telegram Watchdog:** Native Telegram alerts for CPU/Disk spikes.
-* **Zero Bloat:** Pure POSIX Bash.
+Bash-Cloud-Forge is a high-performance, modular toolkit designed for DevOps engineers who demand speed without sacrificing security. Built on **Strict Bash Principles**, it provides a dependency-free way to manage cloud infrastructure.
 
-## 🚀 Quick Start
-1. \`cp .env.example .env\`
-2. \`./forge.sh provision my-server\`
-3. \`./forge.sh harden <ip>\`
+---
+
+## 🏗️ Architecture Overview
+
+The framework follows a modular "Core & Library" pattern:
+* **`forge.sh`**: The unified CLI entry point.
+* **`lib/`**: Reusable modules for logging, environment validation, and core logic.
+* **`scripts/`**: Atomic task scripts called by the orchestrator.
+* **`.github/workflows/`**: Continuous Integration via ShellCheck and shfmt.
+
+---
+
+## 🛡️ Enterprise Safety Features
+
+This toolkit implements **Strict Mode** execution:
+* **Fail-Fast (`set -e`)**: Scripts terminate immediately on any command failure.
+* **Undefined Variable Protection (`set -u`)**: Prevents execution if a variable is missing.
+* **Pipeline Integrity (`set -o pipefail`)**: Ensures errors in piped commands are caught.
+* **Structured Logging**: Timestamped, color-coded output for observability.
+
+---
+
+## 🚀 Getting Started
+
+### 1. Prerequisites
+Ensure your `.env` file is configured based on `.env.example`.
+
+### 2. Usage
+```bash
+# Provision a new instance
+./forge.sh provision my-web-server
+
+# Deploy an application
+./forge.sh deploy production
+
+# Run the Telegram Watchdog test
+./forge.sh test
+\```
+
+---
+
+## 🛠️ Development & CI/CD
+
+To maintain code quality, this repo uses:
+1.  **ShellCheck**: Static analysis to find bugs and bad practices.
+2.  **shfmt**: Enforces a consistent Google-style shell format.
+
+Run local linting:
+\```bash
+find . -type f -name "*.sh" -exec shellcheck {} +
+\```
+
