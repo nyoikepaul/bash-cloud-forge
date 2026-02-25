@@ -1,34 +1,30 @@
 #!/usr/bin/env bash
-# --- Expert Mode: Security Hardening Module ---
 set -euo pipefail
 
 apply_hardening() {
-  log_info "Initiating enterprise security hardening protocol..."
+    if [[ -z "${SERVER_IP:-}" ]]; then
+        fatal "SERVER_IP is not set."
+    fi
 
-  # 1. System Refresh
-  log_info "Synchronizing package repositories and upgrading core components..."
-  apt-get update && apt-get upgrade -y
+    log_info "Connecting to ${SERVER_IP} to apply hardening..."
 
-  # 2. Firewall Lockdown (UFW)
-  log_info "Configuring Uncomplicated Firewall (UFW)..."
-  ufw default deny incoming
-  ufw default allow outgoing
-  ufw allow ssh
-  ufw allow http
-  ufw allow https
-  log_warn "Enabling firewall. This will drop all non-essential incoming connections."
-  echo "y" | ufw enable
+    # Added 'sudo' before system-level commands
+    ssh -o ConnectTimeout=10 ${USER}@${SERVER_IP} bash << REMOTESSH
+        set -euo pipefail
+        echo "[REMOTE] Updating packages..."
+        sudo apt-get update
+        
+        echo "[REMOTE] Installing dependencies..."
+        sudo apt-get install -y ufw python3-venv python3-pip rsync
+        
+        echo "[REMOTE] Configuring Firewall (Note: May fail on WSL)..."
+        sudo ufw allow ssh
+        sudo ufw allow http
+        echo "y" | sudo ufw enable || true
+        
+        echo "[REMOTE] SSH config check..."
+        sudo sshd -t && echo "SSH Config is valid"
+REMOTESSH
 
-  # 3. SSH Fortification
-  log_info "Hardening SSH configuration (Disabling Root & Password Auth)..."
-  # Ensure backup before editing
-  cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
-
-  sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin no/' /etc/ssh/sshd_config
-  sed -i 's/PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
-
-  log_info "Restarting SSH service to apply changes..."
-  systemctl restart ssh
-
-  log_info "✅ Hardening complete. Server is now locked down."
+    log_info "✅ Remote hardening attempt complete."
 }

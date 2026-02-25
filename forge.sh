@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+source "$(dirname "$0")/.env" || true
 # --- Expert Mode: Unified CLI Orchestrator ---
 set -euo pipefail
 source "$(dirname "$0")/lib/logger.sh"

@@ -1,28 +1,27 @@
 #!/usr/bin/env bash
 set -euo pipefail
-
 source "$(dirname "$0")/../../lib/logger.sh"
 source "$(dirname "$0")/../../lib/deploy.sh"
 
+# Load environment to get SERVER_IP
+source .env || true
+
 DEPLOY_PATH="/var/www/flask-api"
-SERVICE_NAME="flask-api.service"
 
-log_info "🚀 Starting Flask API Deployment..."
+log_info "🚀 Starting Remote Flask Deployment to ${SERVER_IP}..."
 
-# 1. Prepare environment
-setup_app_dir "${DEPLOY_PATH}"
+# 1. Setup Remote Folders
+setup_remote_dir "${DEPLOY_PATH}"
 
-# 2. Setup Virtual Environment (Expert move: Isolated dependencies)
-if [[ ! -d "${DEPLOY_PATH}/venv" ]]; then
-  log_info "Creating Python Virtual Environment..."
-  python3 -m venv "${DEPLOY_PATH}/venv"
-fi
+# 2. Push Code
+sync_to_remote "${DEPLOY_PATH}"
 
-# 3. Install/Update Dependencies
-log_info "Installing dependencies from requirements.txt..."
-"${DEPLOY_PATH}/venv/bin/pip" install -r "${DEPLOY_PATH}/requirements.txt"
+# 3. Remote Python Setup
+log_info "Running remote environment setup..."
+ssh paul@${SERVER_IP} << REMOTESSH
+    cd ${DEPLOY_PATH}
+    python3 -m venv venv
+    ./venv/bin/pip install -r requirements.txt || echo "No requirements.txt found, skipping pip"
+REMOTESSH
 
-# 4. Trigger systemd reload
-reload_service "${SERVICE_NAME}"
-
-log_info "✨ Deployment successful!"
+log_info "✨ Remote Deployment Complete!"
