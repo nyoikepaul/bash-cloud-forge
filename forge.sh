@@ -29,7 +29,9 @@ case "$COMMAND" in
         bash ./provision.sh "$@"
         ;;
     deploy)
-        log_info "Starting deployment phase..."
+        source "$(dirname "$0")/lib/deploy.sh"
+        bash ./scripts/deploy/deploy-flask-api.sh "$@"
+        ;;
         bash ./deploy.sh "$@"
         ;;
     harden)
