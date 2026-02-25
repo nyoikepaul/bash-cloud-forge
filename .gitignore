@@ -2,3 +2,5 @@
 *.log
 bin/__pycache__/
 .DS_Store
+doctl
+doctl.tar.gz
