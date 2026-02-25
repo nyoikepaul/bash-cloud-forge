@@ -56,6 +56,10 @@ case "$COMMAND" in
     perform_backup "$@"
     ;;
 
+  update)
+    source "$(dirname "$0")/lib/update.sh"
+    update_toolkit
+    ;;
   test)
     log_info "Running system checks..."
     bash ./test-telegram.sh "$@"
