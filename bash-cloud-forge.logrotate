@@ -1,0 +1,9 @@
+/var/log/bash-cloud-forge/*.log {
+    daily
+    missingok
+    rotate 7
+    compress
+    delaycompress
+    notifempty
+    create 0640 paul paul
+}

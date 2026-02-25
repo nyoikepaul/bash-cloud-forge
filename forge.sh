@@ -61,6 +61,10 @@ case "$COMMAND" in
     source "$(dirname "$0")/lib/update.sh"
     update_toolkit
     ;;
+  setup)
+    bash ./scripts/utils/setup-logs.sh
+    ;;
+
   status)
     source "$(dirname "$0")/lib/dashboard.sh"
     show_dashboard
