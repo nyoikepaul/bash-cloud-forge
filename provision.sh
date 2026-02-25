@@ -1,51 +1,28 @@
 #!/bin/bash
 set -euo pipefail
+source scripts/utils/common.sh
+source lib/security.sh
+source lib/monitor.sh
 
-if [ -z "${1:-}" ]; then
-  echo "Usage: ./provision.sh <droplet-name>"
-  exit 1
-fi
+# Load env
+export $(grep -v '^#' .env | xargs)
 
-DROPLET=$1
-REGION=nyc3
-SIZE=s-2vcpu-4gb
-IMAGE=ubuntu-24-04-x64
+SERVER_NAME=${1:-"forge-node"}
 
-echo "🚀 Provisioning droplet $DROPLET on Ubuntu 24.04..."
+log_info "🚀 Starting Full Forge Cycle for $SERVER_NAME..."
 
-doctl compute droplet create "$DROPLET" \
-  --region "$REGION" \
-  --size "$SIZE" \
-  --image "$IMAGE" \
-  --wait
+# 1. Provision (Call your existing DO script)
+# Assuming your script outputs the IP address
+IP_ADDRESS=$(bash scripts/provision/provision-do.sh "$SERVER_NAME")
 
-IP=$(doctl compute droplet get "$DROPLET" -o json | jq -r '.[0].networks.v4[0].ip_address')
-echo "✅ Droplet created! IP: $IP"
+log_info "📍 Server IP: $IP_ADDRESS. Waiting 30s for SSH to warm up..."
+sleep 30
 
-# Wait for SSH to be ready
-echo "Waiting for SSH..."
-sleep 20
+# 2. Harden
+harden_server "$IP_ADDRESS"
 
-ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 root@"$IP" '
-  apt-get update -qq && apt-get upgrade -y -qq
-  apt-get install -y -qq curl git ufw fail2ban nginx python3 python3-pip python3-venv python3-dev build-essential
+# 3. Monitor
+install_monitor "$IP_ADDRESS"
 
-  # Create deploy user
-  useradd -m -s /bin/bash deploy || true
-  mkdir -p /home/deploy/.ssh
-  cp /root/.ssh/authorized_keys /home/deploy/.ssh/
-  chown -R deploy:deploy /home/deploy/.ssh
-  chmod 700 /home/deploy/.ssh
-  chmod 600 /home/deploy/.ssh/authorized_keys
-  usermod -aG sudo deploy
-  echo "deploy ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/deploy
-
-  # Firewall
-  ufw allow OpenSSH
-  ufw allow "Nginx Full"
-  ufw --force enable
-
-  echo "✅ Provisioning complete! You can now deploy."
-'
-echo "🎉 Server ready at http://$IP"
-echo "Run: ./deploy.sh $DROPLET"
+log_info "🎉 FULL DEPLOYMENT COMPLETE!"
+send_tg_msg "New node $SERVER_NAME ($IP_ADDRESS) is live and protected."
