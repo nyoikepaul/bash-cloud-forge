@@ -1,4 +1,13 @@
-# 🛠️ Bash-Cloud-Forge 2.0
+# 🔥 Bash Cloud Forge Pro – Now Available!
+
+**Brand new (launched Feb 26 2026)** – Pure Bash toolkit for Kenyan freelancers & agencies.
+
+**Free version** = personal use only  
+**Pro subscription (KSh 1,099/mo)** = Commercial license + extra templates + priority support + monthly updates
+
+[Get Pro Now →](https://your-carrd-link.carrd.co)
+
+Perfect for DigitalOcean + AWS + Telegram alerts. Provision + harden + deploy + backup in minutes.# 🛠️ Bash-Cloud-Forge 2.0
 **Enterprise-Grade Cloud Provisioning & Monitoring Framework**
 
 [![Bash Expert CI](https://github.com/nyoikepaul/bash-cloud-forge/actions/workflows/bash-ci.yml/badge.svg)](https://github.com/nyoikepaul/bash-cloud-forge/actions)
