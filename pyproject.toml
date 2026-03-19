@@ -2,7 +2,6 @@
 name = "bash-cloud-forge"
 version = "0.1.0"
 description = "Enterprise Bash provisioning engine"
-readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "fastapi",
@@ -16,7 +15,3 @@ dependencies = [
 
 [tool.uv]
 managed = true
-
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
