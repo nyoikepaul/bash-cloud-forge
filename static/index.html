@@ -1,119 +1,103 @@
-    const routes = [
-      { cmd: "./forge.sh provision my-web-server", url: "/api/v1/provision", method: "GET" },
-      { cmd: "./forge.sh deploy production", url: "/api/v1/deploy", method: "GET" },
-      { cmd: "./forge.sh test-telegram", url: "/api/v1/notify", method: "POST" },
-      { cmd: "./forge.sh backup /var/www/myapp", url: "/api/v1/backup", method: "GET" }
-    ];
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bash Cloud Forge | Production</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Fira+Code', monospace; background-color: #0a0a0a; color: #e0e0e0; }
+        .terminal-glow { box-shadow: 0 0 20px rgba(34, 197, 94, 0.2); }
+        .btn-forge { transition: all 0.2s; border: 1px solid #333; }
+        .btn-forge:hover { border-color: #22c55e; background: rgba(34, 197, 94, 0.1); }
+    </style>
+</head>
+<body class="p-6 md:p-12">
+    <div class="max-w-4xl mx-auto">
+        <header class="mb-12 text-center">
+            <h1 class="text-4xl font-bold text-green-500 mb-2">BASH CLOUD FORGE</h1>
+            <p class="text-zinc-500 text-sm tracking-widest uppercase">Enterprise Provisioning Engine v1.3.0</p>
+        </header>
 
-    function typeWriter(element, text, speed = 15) {
-      element.innerHTML = '';
-      let i = 0;
-      function type() {
-        if (i < text.length) {
-          element.innerHTML += text.charAt(i) === '\n' ? '<br>' : text.charAt(i);
-          i++;
-          setTimeout(type, speed);
-        } else {
-          // Add the blinking cursor at the end
-          element.innerHTML += '<span class="animate-pulse">_</span>';
+        <div class="mb-12 flex justify-center">
+            <button onclick="copyInstall()" class="bg-green-600 hover:bg-green-500 text-black font-bold py-4 px-8 rounded-lg flex items-center gap-3 transition-transform active:scale-95">
+                <span>DOWNLOAD FORGE.SH</span>
+                <span id="copyMsg" class="hidden text-xs bg-black text-white px-2 py-1 rounded">✅ COPIED</span>
+            </button>
+        </div>
+
+        <div class="bg-zinc-900 rounded-xl border border-zinc-800 terminal-glow overflow-hidden">
+            <div class="bg-zinc-800 px-4 py-2 flex items-center gap-2 border-b border-zinc-700">
+                <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                <span class="ml-4 text-xs text-zinc-500">bash-cloud-forge — 80x24</span>
+            </div>
+            
+            <div id="terminalOutput" class="p-6 h-64 overflow-y-auto text-sm leading-relaxed">
+                <span class="text-green-400">$ ./forge.sh --status</span><br>
+                <span class="text-zinc-500">Forge Core: Online</span><br>
+                <span class="text-zinc-500">Registry: Connected to Supabase</span><br>
+                <br>
+                <span class="text-white">Select a module below to begin deployment...</span>
+            </div>
+
+            <div class="p-4 bg-black/50 border-t border-zinc-800 grid grid-cols-2 md:grid-cols-4 gap-3">
+                <button onclick="runDemo(0)" class="btn-forge py-2 px-3 rounded text-xs">Provision Server</button>
+                <button onclick="runDemo(1)" class="btn-forge py-2 px-3 rounded text-xs">Deploy App</button>
+                <button onclick="runDemo(2)" class="btn-forge py-2 px-3 rounded text-xs text-green-400">Test Telegram</button>
+                <button onclick="runDemo(3)" class="btn-forge py-2 px-3 rounded text-xs">Backup Data</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const routes = [
+            { cmd: "./forge.sh provision nairobi-prod-01", url: "/api/v1/provision", method: "GET" },
+            { cmd: "./forge.sh deploy web-app", url: "/api/v1/deploy", method: "GET" },
+            { cmd: "./forge.sh notify --test", url: "/api/v1/notify", method: "POST" },
+            { cmd: "./forge.sh backup --all", url: "/api/v1/backup", method: "GET" }
+        ];
+
+        function typeWriter(element, text, speed = 15) {
+            element.innerHTML = '';
+            let i = 0;
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i) === '\n' ? '<br>' : text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                }
+            }
+            type();
         }
-      }
-      type();
-    }
 
-    async function runDemo(index) {
-      const output = document.getElementById('terminalOutput');
-      
-      // Clear terminal and type the command
-      output.innerHTML = `<span class="text-green-400">$ ${routes[index].cmd}</span><br><br>`;
-      
-      const outDiv = document.createElement('div');
-      outDiv.className = 'output';
-      output.appendChild(outDiv);
-      
-      // Show loading state
-      outDiv.innerHTML = '<span class="text-zinc-500 animate-pulse">Running sequence...</span>';
+        async function runDemo(index) {
+            const output = document.getElementById('terminalOutput');
+            output.innerHTML = `<span class="text-green-400">$ ${routes[index].cmd}</span><br><br>`;
+            
+            const outDiv = document.createElement('div');
+            output.appendChild(outDiv);
+            outDiv.innerHTML = '<span class="text-zinc-500 animate-pulse">Running sequence...</span>';
 
-      try {
-        // Fetch real logic from FastAPI backend
-        const response = await fetch(routes[index].url, { method: routes[index].method });
-        const data = await response.json();
-        
-        // Type out the API response
-        typeWriter(outDiv, data.output);
-      } catch (err) {
-        typeWriter(outDiv, "❌ Connection to Forge API failed.\nEnsure backend is running.");
-      }
-    }
-
-    function copyInstall() {
-      const cmd = `git clone https://github.com/nyoikepaul/bash-cloud-forge.git && cd bash-cloud-forge && chmod +x *.sh && cp .env.example .env && ./forge.sh --help`;
-      navigator.clipboard.writeText(cmd).then(() => {
-        const msg = document.getElementById('copyMsg');
-        msg.classList.remove('hidden');
-        setTimeout(() => msg.classList.add('hidden'), 3000);
-      }).catch(() => {
-        alert("Copy failed. Manually copy: " + cmd);
-      });
-    }
-
-    // Auto-run first demo to make it look alive on load
-    setTimeout(() => runDemo(0), 800);
-  </script>
-</body>
-</html>
-  <script>
-    const routes = [
-      { cmd: "./forge.sh provision my-web-server", url: "/api/v1/provision", method: "GET" },
-      { cmd: "./forge.sh deploy production", url: "/api/v1/deploy", method: "GET" },
-      { cmd: "./forge.sh test-telegram", url: "/api/v1/notify", method: "POST" },
-      { cmd: "./forge.sh backup /var/www/myapp", url: "/api/v1/backup", method: "GET" }
-    ];
-
-    function typeWriter(element, text, speed = 15) {
-      element.innerHTML = '';
-      let i = 0;
-      function type() {
-        if (i < text.length) {
-          element.innerHTML += text.charAt(i) === '\n' ? '<br>' : text.charAt(i);
-          i++;
-          setTimeout(type, speed);
-        } else {
-          element.innerHTML += '<span class="animate-pulse">_</span>';
+            try {
+                const response = await fetch(routes[index].url, { method: routes[index].method });
+                const data = await response.json();
+                typeWriter(outDiv, data.output);
+            } catch (err) {
+                outDiv.innerHTML = '<span class="text-red-500">❌ Error: API Connection Refused</span>';
+            }
         }
-      }
-      type();
-    }
 
-    async function runDemo(index) {
-      const output = document.getElementById('terminalOutput');
-      output.innerHTML = `<span class="text-green-400">$ ${routes[index].cmd}</span><br><br>`;
-      
-      const outDiv = document.createElement('div');
-      outDiv.className = 'output';
-      output.appendChild(outDiv);
-      
-      outDiv.innerHTML = '<span class="text-zinc-500 animate-pulse">Running sequence...</span>';
-
-      try {
-        const response = await fetch(routes[index].url, { method: routes[index].method });
-        const data = await response.json();
-        typeWriter(outDiv, data.output);
-      } catch (err) {
-        typeWriter(outDiv, "❌ Connection to Forge API failed.\nRun 'vercel --prod' to ensure backend is live.");
-      }
-    }
-
-    function copyInstall() {
-      const cmd = "git clone https://github.com/nyoikepaul/bash-cloud-forge.git && cd bash-cloud-forge && chmod +x *.sh && cp .env.example .env && ./forge.sh --help";
-      navigator.clipboard.writeText(cmd).then(() => {
-        const msg = document.getElementById('copyMsg');
-        msg.classList.remove('hidden');
-        setTimeout(() => msg.classList.add('hidden'), 3000);
-      });
-    }
-
-    setTimeout(() => runDemo(0), 800);
-  </script>
+        function copyInstall() {
+            const cmd = "curl -sSL https://forge.sh/install | bash";
+            navigator.clipboard.writeText(cmd).then(() => {
+                const msg = document.getElementById('copyMsg');
+                msg.classList.remove('hidden');
+                setTimeout(() => msg.classList.add('hidden'), 3000);
+            });
+        }
+    </script>
 </body>
 </html>
