@@ -14,6 +14,60 @@
     </style>
 </head>
 <body class="p-6 md:p-12">
+<div id="matrix-overlay" class="fixed inset-0 bg-black z-50 flex flex-col items-center justify-center font-mono text-green-500 overflow-hidden">
+    <div id="matrix-canvas" class="absolute inset-0 opacity-20"></div>
+    <div class="relative z-10 text-center">
+        <div id="loading-text" class="text-xl md:text-2xl mb-4 tracking-widest uppercase glitch">Initializing Forge Link...</div>
+        <div class="w-64 h-1 bg-zinc-900 rounded-full overflow-hidden">
+            <div id="progress-bar" class="w-0 h-full bg-green-500 transition-all duration-300"></div>
+        </div>
+        <div id="status-log" class="mt-4 text-[10px] text-zinc-500 uppercase"></div>
+    </div>
+</div>
+
+<script>
+    // Matrix Rain Effect
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    document.getElementById('matrix-canvas').appendChild(canvas);
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()*&^%";
+    const fontSize = 14;
+    const columns = canvas.width / fontSize;
+    const drops = Array(Math.floor(columns)).fill(1);
+
+    function drawMatrix() {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "#0F0";
+        ctx.font = fontSize + "px monospace";
+        for (let i = 0; i < drops.length; i++) {
+            const text = letters.charAt(Math.floor(Math.random() * letters.length));
+            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+            drops[i]++;
+        }
+    }
+    const matrixInterval = setInterval(drawMatrix, 33);
+
+    // Boot Sequence
+    const logs = ["Loading Kernel...", "Decrypting SSH Keys...", "Connecting to Nairobi-HQ...", "Handshake Verified.", "Accessing Forge..."];
+    let logIdx = 0;
+    const logInterval = setInterval(() => {
+        if (logIdx < logs.length) {
+            document.getElementById('status-log').innerText = logs[logIdx];
+            document.getElementById('progress-bar').style.width = ((logIdx + 1) / logs.length) * 100 + "%";
+            logIdx++;
+        } else {
+            clearInterval(logInterval);
+            clearInterval(matrixInterval);
+            document.getElementById('matrix-overlay').classList.add('opacity-0');
+            setTimeout(() => document.getElementById('matrix-overlay').remove(), 500);
+            runDemo(0); // Auto-start terminal after load
+        }
+    }, 600);
+</script>
     <div class="max-w-4xl mx-auto">
         <header class="mb-12 text-center">
             <h1 class="text-4xl font-bold text-green-500 mb-2">BASH CLOUD FORGE</h1>
