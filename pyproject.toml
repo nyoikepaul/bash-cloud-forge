@@ -1,14 +1,22 @@
 [project]
 name = "bash-cloud-forge"
-version = "1.1.0"
-description = "Pure Bash Cloud Provisioning API"
+version = "0.1.0"
+description = "Enterprise Bash provisioning engine"
+readme = "README.md"
+requires-python = ">=3.12"
 dependencies = [
     "fastapi",
     "uvicorn[standard]",
     "pydantic-settings",
     "sqlalchemy",
     "psycopg2-binary",
+    "python-dotenv",
+    "supabase"
 ]
 
 [tool.uv]
 managed = true
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
