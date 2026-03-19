@@ -4,3 +4,9 @@ bin/__pycache__/
 .DS_Store
 doctl
 doctl.tar.gz
+.cache/
+pre-commit/
+venv/
+.env
+.pytest_cache/
+__pycache__/
