@@ -1,93 +1,3 @@
-<!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bash Cloud Forge • Pure Bash Cloud Provisioning</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-  <style>
-    body { font-family: 'Courier New', monospace; }
-    .terminal { background: #0a0a0a; border: 3px solid #22c55e; box-shadow: 0 0 40px rgba(34, 197, 94, 0.4); }
-    .output { color: #86efac; animation: fadeIn 0.3s; }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-  </style>
-</head>
-<body class="bg-zinc-950 text-zinc-100 min-h-screen">
-  <div class="max-w-5xl mx-auto px-6 py-12">
-
-    <!-- Hero -->
-    <div class="text-center mt-16">
-      <h1 class="text-6xl font-bold text-green-400 tracking-tighter">🔥 BASH CLOUD FORGE</h1>
-      <p class="text-2xl mt-4 text-zinc-400">Pure Bash • Zero deps • Provision + Harden + Deploy in minutes</p>
-      <p class="text-xl mt-2 text-green-500">Perfect for Kenyan freelancers & agencies</p>
-    </div>
-
-    <!-- One-click Install -->
-    <div class="mt-12 flex justify-center">
-      <button onclick="copyInstall()" 
-              class="bg-green-500 hover:bg-green-600 text-black font-bold text-xl px-12 py-6 rounded-3xl flex items-center gap-3 transition-all active:scale-95">
-        <i class="fas fa-download"></i>
-        ONE-CLICK INSTALL (Free Version)
-      </button>
-    </div>
-    <p id="copyMsg" class="text-center text-green-400 mt-4 text-sm hidden font-bold">✅ Command copied! Paste in your terminal now.</p>
-
-    <!-- Live Demo Terminal -->
-    <div class="mt-16">
-      <h2 class="text-3xl font-bold text-center mb-6 text-green-400">Try it LIVE in your browser</h2>
-      <div id="demoTerminal" class="terminal rounded-3xl p-8 text-green-400 text-base max-w-2xl mx-auto h-96 overflow-hidden flex flex-col">
-        <div class="flex items-center gap-2 mb-6">
-          <div class="w-3 h-3 bg-red-500 rounded-full"></div>
-          <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
-          <div class="w-3 h-3 bg-green-500 rounded-full"></div>
-          <span class="ml-4 text-zinc-500 text-sm">forge.sh — bash-cloud-forge</span>
-        </div>
-        <div id="terminalOutput" class="flex-1 font-mono text-sm overflow-y-auto leading-relaxed"></div>
-        <div class="flex gap-3 mt-6 flex-wrap">
-          <button onclick="runDemo(0)" class="px-6 py-3 bg-zinc-900 hover:bg-green-900 rounded-xl text-xs transition">Provision Server</button>
-          <button onclick="runDemo(1)" class="px-6 py-3 bg-zinc-900 hover:bg-green-900 rounded-xl text-xs transition">Deploy App</button>
-          <button onclick="runDemo(2)" class="px-6 py-3 bg-zinc-900 hover:bg-green-900 rounded-xl text-xs transition">Test Telegram</button>
-          <button onclick="runDemo(3)" class="px-6 py-3 bg-zinc-900 hover:bg-green-900 rounded-xl text-xs transition">Backup Data</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Features -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-20">
-      <div class="bg-zinc-900 p-8 rounded-3xl border border-green-900 hover:border-green-400 transition">
-        <i class="fas fa-server text-4xl text-green-400 mb-4"></i>
-        <h3 class="text-2xl font-bold">Provision</h3>
-        <p class="text-zinc-400 mt-2">DigitalOcean & AWS droplets in seconds</p>
-      </div>
-      <div class="bg-zinc-900 p-8 rounded-3xl border border-green-900 hover:border-green-400 transition">
-        <i class="fas fa-shield-alt text-4xl text-green-400 mb-4"></i>
-        <h3 class="text-2xl font-bold">Harden</h3>
-        <p class="text-zinc-400 mt-2">Strict mode + fail2ban + UFW built-in</p>
-      </div>
-      <div class="bg-zinc-900 p-8 rounded-3xl border border-green-900 hover:border-green-400 transition">
-        <i class="fas fa-bell text-4xl text-green-400 mb-4"></i>
-        <h3 class="text-2xl font-bold">Monitor</h3>
-        <p class="text-zinc-400 mt-2">Real-time Telegram alerts + auto-backups</p>
-      </div>
-    </div>
-
-    <!-- Pro CTA -->
-    <div class="mt-20 text-center bg-gradient-to-r from-green-950 to-zinc-900 border border-green-500 rounded-3xl p-12">
-      <h3 class="text-4xl font-bold">Bash Cloud Forge <span class="text-green-400">Pro</span></h3>
-      <p class="text-2xl mt-4">KSh 1,099/month • Commercial license + extra templates + priority support</p>
-      <a href="https://paulnyoike.carrd.co" target="_blank" 
-         class="inline-block mt-8 bg-green-500 hover:bg-green-600 text-black font-bold px-12 py-5 rounded-3xl text-xl transition">
-        Get Pro Now →
-      </a>
-    </div>
-
-    <div class="text-center mt-12">
-      <a href="https://github.com/nyoikepaul/bash-cloud-forge" target="_blank" class="text-zinc-500 hover:text-green-400 text-lg">⭐ View full source on GitHub</a>
-    </div>
-  </div>
-
-  <script>
     const commands = [
       { cmd: "./forge.sh provision my-web-server", out: "✅ Droplet created on DigitalOcean\n✅ Server hardened (fail2ban + UFW)\n✅ Telegram alert sent\n⏱️  Total time: 47 seconds" },
       { cmd: "./forge.sh deploy production", out: "🚀 Application deployed\n✅ Nginx + SSL configured\n✅ Live at https://your-app.com\n✅ Watchdog started" },
@@ -132,6 +42,71 @@
 
     // Auto-run first demo
     setTimeout(() => runDemo(0), 600);
+  </script>
+</body>
+</html>
+  <script>
+    const routes = [
+      { cmd: "./forge.sh provision my-web-server", url: "/api/v1/provision", method: "GET" },
+      { cmd: "./forge.sh deploy production", url: "/api/v1/deploy", method: "GET" },
+      { cmd: "./forge.sh test-telegram", url: "/api/v1/notify", method: "POST" },
+      { cmd: "./forge.sh backup /var/www/myapp", url: "/api/v1/backup", method: "GET" }
+    ];
+
+    function typeWriter(element, text, speed = 15) {
+      element.innerHTML = '';
+      let i = 0;
+      function type() {
+        if (i < text.length) {
+          element.innerHTML += text.charAt(i) === '\n' ? '<br>' : text.charAt(i);
+          i++;
+          setTimeout(type, speed);
+        } else {
+          // Add the blinking cursor at the end
+          element.innerHTML += '<span class="animate-pulse">_</span>';
+        }
+      }
+      type();
+    }
+
+    async function runDemo(index) {
+      const output = document.getElementById('terminalOutput');
+      
+      // Clear terminal and type the command
+      output.innerHTML = `<span class="text-green-400">$ ${routes[index].cmd}</span><br><br>`;
+      
+      const outDiv = document.createElement('div');
+      outDiv.className = 'output';
+      output.appendChild(outDiv);
+      
+      // Show loading state
+      outDiv.innerHTML = '<span class="text-zinc-500 animate-pulse">Running sequence...</span>';
+
+      try {
+        // Fetch real logic from FastAPI backend
+        const response = await fetch(routes[index].url, { method: routes[index].method });
+        const data = await response.json();
+        
+        // Type out the API response
+        typeWriter(outDiv, data.output);
+      } catch (err) {
+        typeWriter(outDiv, "❌ Connection to Forge API failed.\nEnsure backend is running.");
+      }
+    }
+
+    function copyInstall() {
+      const cmd = `git clone https://github.com/nyoikepaul/bash-cloud-forge.git && cd bash-cloud-forge && chmod +x *.sh && cp .env.example .env && ./forge.sh --help`;
+      navigator.clipboard.writeText(cmd).then(() => {
+        const msg = document.getElementById('copyMsg');
+        msg.classList.remove('hidden');
+        setTimeout(() => msg.classList.add('hidden'), 3000);
+      }).catch(() => {
+        alert("Copy failed. Manually copy: " + cmd);
+      });
+    }
+
+    // Auto-run first demo to make it look alive on load
+    setTimeout(() => runDemo(0), 800);
   </script>
 </body>
 </html>
